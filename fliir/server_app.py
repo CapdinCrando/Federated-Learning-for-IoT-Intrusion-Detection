@@ -3,14 +3,14 @@
 from flwr.common import Context, ndarrays_to_parameters
 from flwr.server import ServerApp, ServerAppComponents, ServerConfig
 from flwr.server.strategy import FedAvg
-from fliir.task import LitAutoEncoder, get_parameters
+from fliir.task_fliir import FLIIRModel, get_parameters
 
 
 def server_fn(context: Context) -> ServerAppComponents:
     """Construct components for ServerApp."""
 
     # Convert model parameters to flwr.common.Parameters
-    ndarrays = get_parameters(LitAutoEncoder())
+    ndarrays = get_parameters(FLIIRModel())
     global_model_init = ndarrays_to_parameters(ndarrays)
 
     # Define strategy

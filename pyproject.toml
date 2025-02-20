@@ -14,6 +14,8 @@ dependencies = [
     "pytorch-lightning==1.6.0; sys_platform != 'darwin'",
     "torch==2.5.1",
     "torchvision==0.20.1",
+    "sklearn==1.6.1",
+    "kagglehub=0.3.9",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -29,6 +31,9 @@ clientapp = "fliir.client_app:app"
 [tool.flwr.app.config]
 num-server-rounds = 3
 max-epochs = 1
+num-channels = 1
+num-classes = 2
+learning-rate = 0.001
 
 [tool.flwr.federations]
 default = "local-simulation"

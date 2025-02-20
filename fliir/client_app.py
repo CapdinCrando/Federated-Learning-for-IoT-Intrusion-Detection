@@ -7,8 +7,8 @@ from flwr.common import Context
 
 disable_progress_bar()
 
-from fliir.task import (
-    LitAutoEncoder,
+from fliir.task_fliir import (
+    FLIIRModel,
     get_parameters,
     load_data,
     set_parameters,
@@ -17,7 +17,7 @@ from fliir.task import (
 
 class FlowerClient(NumPyClient):
     def __init__(self, train_loader, val_loader, test_loader, max_epochs):
-        self.model = LitAutoEncoder()
+        self.model = FLIIRModel()
         self.train_loader = train_loader
         self.val_loader = val_loader
         self.test_loader = test_loader

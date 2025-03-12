@@ -168,7 +168,7 @@ def load_csv_dataset(file_path, transform=None):
     data_labels_encoded = np.array(data_labels_encoded, dtype=np.int64)
 
     # Convert to tensors
-    x_tensor = torch.tensor(encoded_data_array)
+    x_tensor = torch.tensor(encoded_data_array).unsqueeze(1)
     y_tensor = torch.tensor(data_labels_encoded)
 
     # Apply transform

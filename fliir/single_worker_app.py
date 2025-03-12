@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     pre_split_data, pre_split_labels, labels = load_csv_dataset(dataset_path)
 
-    formatted_data = [(x.unsqueeze(0), y.item()) for x, y in zip(pre_split_data, pre_split_labels)]
+    formatted_data = [(x, y.item()) for x, y in zip(pre_split_data, pre_split_labels)]
 
     # Do test train split
     whole_data_size = len(formatted_data)

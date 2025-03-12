@@ -4,3 +4,6 @@
 python -m venv env
 source env/Scripts/activate
 pip install -e .
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
+pip install pytorch-lightning
+pip install tensorboard

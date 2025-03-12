@@ -1,0 +1,1 @@
+env/Scripts/tensorboard.exe --logdir lightning_logs

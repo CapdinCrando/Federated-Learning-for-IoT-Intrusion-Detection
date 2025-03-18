@@ -5,10 +5,10 @@ from torch.utils.data import DataLoader, random_split, TensorDataset
 from pytorch_lightning import LightningModule, Trainer, callbacks, Callback
 
 ## Parameters
-batch_size = 64             # How many data samples in each training epoch
-learning_rate = 0.001       # How fast the model learns
-max_epochs = 200            # Number of training epochs
-training_patience = 20      # How many epochs to wait for no improvement
+batch_size = 256            # How many data samples in each training step
+learning_rate = 0.0779591   # How fast the model learns
+max_epochs = 10             # Number of training epochs
+training_patience = 10      # How many epochs to wait for no improvement
 num_workers = 2             # Number of worker threads per dataloader
 test_train_split = 0.2      # How much of overall data goes to test as opposed to train
 train_val_split = 0.8       # How much of train data goes to train as opposed to val
@@ -50,11 +50,13 @@ if __name__ == '__main__':
         batch_size=batch_size,
         shuffle=True,
         num_workers=num_workers,
+        persistent_workers=True
     )
     val_loader = DataLoader(
         val_dataset,
         batch_size=batch_size,
         num_workers=num_workers,
+        persistent_workers=True
     )
 
     # Get number of classes
@@ -72,8 +74,6 @@ if __name__ == '__main__':
 
     # Get GPU id
     gpu_id = (1 if torch.cuda.is_available() else 0)
-
-    print(device)
 
     # Set up early stopping (prevent overfitting)
     early_stopping = callbacks.EarlyStopping(

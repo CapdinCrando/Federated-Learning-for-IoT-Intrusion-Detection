@@ -13,20 +13,26 @@ Description here
 To setup your environment, use the following command from the project root directory:
 
 ```bash
-$ bash setup.sh
+bash setup.sh
 ```
 
 That will create a venv environment and setup all dependencies.
 
 ## Running the Simulation
 
-To run the simulation with default arguments, simply run:
+To run the federated learning simulation with default arguments, simply run:
 
 ```bash
-$ flwr run .
+flwr run .
 ```
 
-Configuration
+To run the single worker experiment (non-federated), run:
+
+```
+python fliir/single_worker_app.py
+```
+
+## Configuration
 
 Note: To configure the project, see pyproject.toml.
 
@@ -35,5 +41,5 @@ Note: To configure the project, see pyproject.toml.
 To see results with TensorBoard, run the following:
 
 ```bash
-$ python env/Lib/site-packages/tensorboard/main.py --logdir="lightning_logs"
+bash run_tensorboard.py
 ```

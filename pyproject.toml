@@ -29,8 +29,8 @@ clientapp = "fliir.client_app:app"
 num-server-rounds = 3
 max-epochs = 1
 num-channels = 1
-num-classes = 2
-learning-rate = 0.001
+num-classes = 4
+learning-rate = 0.0779591
 
 [tool.flwr.federations]
 default = "local-simulation"

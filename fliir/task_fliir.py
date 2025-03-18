@@ -8,6 +8,7 @@ import csv
 import pytorch_lightning as pl
 import torch
 import numpy as np
+from datasets import load_dataset
 from flwr_datasets import FederatedDataset
 from flwr_datasets.partitioner import IidPartitioner
 from torch import nn
@@ -37,24 +38,24 @@ class FLIIRModel(pl.LightningModule):
         super(FLIIRModel, self).__init__()
         self.learning_rate = learning_rate
 
-        self.pool = nn.MaxPool1d(2)
-        self.conv1 = nn.Conv1d(num_channels, 32, 3)
-        self.bn1 = nn.BatchNorm1d(32)
-        self.lstm = nn.LSTM(input_size=32, hidden_size=64, batch_first=True, num_layers=2, dropout=0.2)
+        #self.pool = nn.MaxPool1d(2)
+        #self.conv1 = nn.Conv1d(num_channels, 32, 3)
+        #self.bn1 = nn.BatchNorm1d(32)
+        self.lstm = nn.LSTM(input_size=16, hidden_size=16, num_layers=1)
         self.flatten = nn.Flatten()
-        self.fc1 = nn.Linear(64, 32)
-        self.fc2 = nn.Linear(32, num_classes)
+        #self.fc1 = nn.Linear(64, 32)
+        self.fc2 = nn.Linear(16, num_classes)
 
     def forward(self, x):
         '''
         Function called when training or inferring.
         Represents the structure of the NN.
         '''
-        x = self.pool(func.relu(self.bn1(self.conv1(x))))
-        lstm_out, _ = self.lstm(x.permute(0, 2, 1))
+        #x = self.pool(func.relu(self.bn1(self.conv1(x))))
+        lstm_out, _ = self.lstm(x)
         x = lstm_out.mean(dim=1)
         x = self.flatten(x)
-        x = func.relu(self.fc1(x))
+        #x = func.relu(self.fc1(x))
         x = self.fc2(x)
         return x
 
@@ -154,8 +155,9 @@ def load_csv_dataset(file_path, transform=None):
     dataset_data = csv_data[1:]
 
     # Transpose and cut
+    # Note: We also cut out id and timecode
     data_transpose = np.transpose(dataset_data)
-    data_no_labels, data_transpose_labels = data_transpose[:-1], data_transpose[-1]
+    data_no_labels, data_transpose_labels = data_transpose[2:-1], data_transpose[-1]
     dataset_labels_list = list(set(data_transpose_labels))
 
     # Encode labels
@@ -192,9 +194,12 @@ def load_data(partition_id, num_partitions):
 
         x_full, y_full, _ = load_csv_dataset(f'{dataset_path}/WSN-DS.csv')
         full_dataset = TensorDataset(x_full, y_full)
-        fds_dataset = FederatedDataset(full_dataset, partitioners={"train": partitioner}, balance=True)
+        partitioner.dataset = full_dataset
+
+        #fds_dataset = FederatedDataset(partitioners={"train": partitioner}, balance=True)
+        #dataset = load_dataset("csv", data_files=data_files)
     
-    partition_full = fds_dataset.load_partition(partition_id, "train")
+    partition_full = partitioner.load_partition(partition_id, "train")
 
     partition_test_train = partition_full.train_test_split(test_size=0.2, seed=42)
 
@@ -202,14 +207,14 @@ def load_data(partition_id, num_partitions):
 
     trainloader = DataLoader(
         partition_train_val["train"],
-        batch_size=32,
+        batch_size=8,
         shuffle=True,
         num_workers=2,
     )
     valloader = DataLoader(
         partition_train_val["test"],
-        batch_size=32,
+        batch_size=8,
         num_workers=2,
     )
-    testloader = DataLoader(partition_test_train["test"], batch_size=32, num_workers=1)
+    testloader = DataLoader(partition_test_train["test"], batch_size=8, num_workers=1)
     return trainloader, valloader, testloader
